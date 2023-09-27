@@ -14,10 +14,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.LifecycleOwner
 
 class SecondFragment : Fragment() {
-
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,37 +26,38 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var colorState: ColorState? = arguments?.getParcelable(TAG)
 
-        var colorState = ColorState()
+        val changeColorBtn: Button = view.findViewById(R.id.change_color_btn)
 
-        setFragmentResultListener("requestKey") { requestKey, bundle ->
-
-            var result : ColorState?= bundle.getParcelable("bundleKey")
-            if (result != null) {
-                colorState = result
+        changeColorBtn.setOnClickListener {
+            if (colorState != null) {
+                colorState.colorCount = (colorState.colorCount + 1) % 3
             }
         }
 
-
-        val changeColorBtn : Button = view.findViewById(R.id.change_color_btn)
-
-        changeColorBtn.setOnClickListener {
-            colorState.colorCount = (colorState.colorCount+1)%3
-        }
-
-        val toFirstBtn : Button = view.findViewById(R.id.to_first_btn)
+        val toFirstBtn: Button = view.findViewById(R.id.to_first_btn)
 
         toFirstBtn.setOnClickListener {
 
             val result = colorState
             setFragmentResult("requestKey2", bundleOf("bundleKey2" to result))
-
             //parentFragmentManager.beginTransaction().remove(SecondFragment())
+            val fragment1 = FirstFragment.newInstance()
+            parentFragmentManager.beginTransaction().replace(R.id.first_container, fragment1)
+                .commit()
         }
     }
 
-    companion object{
+    companion object {
+        private const val TAG = "colorState"
+        fun newInstance(colorState: ColorState): SecondFragment {
 
-        fun newInstance() = SecondFragment()
+            val fragment = SecondFragment()
+            val arguments = Bundle()
+            arguments.putParcelable(TAG, colorState)
+            fragment.arguments = arguments
+            return fragment
+        }
     }
 }

@@ -11,8 +11,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val firstFragment = FirstFragment.newInstance()
-        val secondFragment = SecondFragment.newInstance()
-
         supportFragmentManager.beginTransaction().replace(R.id.first_container,firstFragment).commit()
 
     }
